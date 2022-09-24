@@ -1,0 +1,47 @@
+<div class="home-wrapper clearfix">
+
+    <form [formGroup]="memberForm">
+        <div class="form-group" *ngIf="state !== 'guest'">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" placeholder="name@example.com" formControlName="email" required>
+        </div>
+        <div class="form-group" *ngIf="state === 'old' || state === 'new'">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" formControlName="password" required>
+            <a (click)="setState('forgot')" *ngIf="state === 'old'">Forgot your password?</a>
+        </div>
+        <div class="form-group" *ngIf="state === 'new' || state === 'guest'">
+            <label for="username">Username <span class="note">(Others will see this)</span></label>
+            <input type="text" class="form-control" id="username" formControlName="username" required autocomplete="off">
+        </div>
+
+        <div class="submit-wrapper" *ngIf="state === 'old'">
+            <button type="submit" class="btn btn-large" (click)="signIn()" [disabled]="!memberForm.valid">Sign In</button>
+            <a (click)="setState('guest')">Enter as a guest?</a>
+            <a (click)="setState('new')">Create an account?</a>
+        </div>
+
+        <div class="submit-wrapper" *ngIf="state === 'guest'">
+            <button type="submit" class="btn btn-large" (click)="guestSignIn()" [disabled]="!memberForm.valid">Enter as a guest</button>
+            <a (click)="setState('new')">Create an account?</a>
+            <a (click)="setState('old')">Already a member?</a>
+        </div>
+
+        <div class="submit-wrapper" *ngIf="state === 'new'">
+            <button type="submit" class="btn btn-large" (click)="signUp()" [disabled]="!memberForm.valid">Sign Up</button>
+            <a (click)="setState('guest')">Enter as a guest?</a>
+            <a (click)="setState('old')">Already a member?</a>
+            
+        </div>
+
+        <div class="submit-wrapper" *ngIf="state === 'forgot'">
+            <button type="submit" class="btn btn-large" (click)="resetPassword()" [disabled]="!memberForm.valid">Reset Password</button>
+            <a (click)="setState('old')">Never mind, I remember it now!</a>
+            <a (click)="setState('guest')">Enter as a guest?</a>
+        </div>
+
+
+
+    </form>
+
+</div>

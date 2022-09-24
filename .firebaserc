@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "little-wordy": {
+      "hosting": {
+        "little-wordy": [
+          "little-wordy"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "little-wordy"
+  }
+}
