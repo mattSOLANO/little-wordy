@@ -1,16 +1,16 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ref, getDatabase, push, set, connectDatabaseEmulator} from '@angular/fire/database';
+import { getFirestore, doc, setDoc, addDoc, collection, connectFirestoreEmulator } from "@angular/fire/firestore";
 import { Router } from '@angular/router';
 import { User } from '../models/user';
 import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  signInAnonymously, 
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
   GoogleAuthProvider,
-  signInWithPopup,
   connectAuthEmulator,
+  createUserWithEmailAndPassword,
+  getAuth, 
+  sendPasswordResetEmail,
+  signInAnonymously, 
+  signInWithEmailAndPassword, 
+  signInWithPopup,
   updateProfile
 } from '@angular/fire/auth';
 
@@ -20,8 +20,8 @@ import {
 export class AuthService {
 
   auth = getAuth();
-  
-  db = getDatabase();
+  db = getFirestore();
+
   localUser = localStorage.getItem('user');
   userData = this.localUser ? JSON.parse(this.localUser) : null; // Save logged in user data
 
@@ -29,10 +29,10 @@ export class AuthService {
     public router: Router,
     public ngZone: NgZone // NgZone service to remove outside scope warning
   ) {
-
-    connectAuthEmulator(this.auth, "http://localhost:9099");
+    
     if(location.hostname === "localhost") {
-      connectDatabaseEmulator(this.db, "localhost", 9000);
+      connectAuthEmulator(this.auth, "http://localhost:9099");
+      connectFirestoreEmulator(this.db, "localhost", 8080);
     }
 
     /* Saving user data in localstorage when
@@ -147,25 +147,25 @@ export class AuthService {
   sign up with username/password and sign in with social auth
   provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
   SetUserData(user: User) {
-    const userRef = ref(this.db, `users/${user.uid}`);
+    const userRef = doc(this.db, `users/${user.uid}`)
     const userData: User = {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName
     };
     
-    set(userRef, userData);
+    setDoc(userRef, userData, {merge: true});
   }
 
   SetGuestUserData(user: User) {
-    const userRef = ref(this.db, `users/${user.uid}`);
+    const userRef = doc(this.db, `users/${user.uid}`)
     const userData: User = {
       uid: user.uid,
-      email: '',
+      email: user.email,
       displayName: user.displayName
     };
     
-    set(userRef, userData);
+    setDoc(userRef, userData, {merge: true});
   }
 
   // Sign out
